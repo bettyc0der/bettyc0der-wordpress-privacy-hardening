@@ -1,6 +1,37 @@
-# Bettycoder WordPress Privacy Hardening
+<div align="center">
 
-A lightweight WordPress security and privacy hardening plugin that reduces common information disclosure and enumeration without turning a personal blog into a giant security stack.
+# BettyCoder WordPress Privacy Hardening
+
+**A lightweight WordPress security and privacy hardening plugin built from a real before → remediate → retest lab.**
+
+![WordPress](https://img.shields.io/badge/WORDPRESS-HARDENING-435844?style=for-the-badge&logo=wordpress&logoColor=F3E3BE)
+![REST API](https://img.shields.io/badge/REST_USER_ENUM-BLOCKED-5F735B?style=for-the-badge&logo=wordpress&logoColor=F3E3BE)
+![XML-RPC](https://img.shields.io/badge/XML--RPC-BLOCKED-D8B35C?style=for-the-badge&logo=shield&logoColor=2B2118)
+![Author Enum](https://img.shields.io/badge/AUTHOR_ENUM-BLOCKED-2B2118?style=for-the-badge&logo=shield&logoColor=F3E3BE)
+
+</div>
+
+---
+
+## 🧪 Verified After-Hardening Results
+
+<div align="center">
+
+![Sanitized after-hardening validation](screenshots/sharden.png)
+
+</div>
+
+The screenshot above is a sanitized retest of the same endpoints after activating the plugin.
+
+| Test | Expected hardened result | Verified |
+|---|---:|---:|
+| REST API user enumeration | HTTP **403** | ✅ |
+| XML-RPC | HTTP **403** | ✅ |
+| `?author=1` enumeration | HTTP **404** | ✅ |
+
+> Target domain and identifying details are redacted in the public evidence.
+
+---
 
 ## What it does
 
@@ -13,53 +44,63 @@ A lightweight WordPress security and privacy hardening plugin that reduces commo
 - Replaces detailed login errors with a generic message
 - Adds conservative privacy/security headers
 
-## Compatibility
-
-This plugin is written against standard WordPress core hooks, so it is intended to work on normal self-hosted WordPress installations, not just the site it was originally tested on.
-
-A few features are intentionally opinionated:
-
-- Disabling XML-RPC can break Jetpack, the WordPress mobile app, remote publishing, or other services that depend on XML-RPC.
-- Blocking author archives is not appropriate for sites that intentionally publish public author profile/archive pages.
-- The security headers are conservative, but sites with unusual iframe or browser-permission requirements should test them.
-- The plugin reduces easy fingerprinting and enumeration; it cannot completely hide that a site uses WordPress or prevent themes/plugins from being inferred from public asset paths.
-
-Always test on a staging site or take a backup before deploying to a production site.
+---
 
 ## Why I built it
 
-This project came from manually testing my own WordPress site during PenTest+ practice.
+This project came from manually testing my own authorized WordPress site during PenTest+ practice.
 
 The workflow was:
 
-1. Enumerate the site with tools such as DirBuster, Gobuster, FFUF, and curl
+1. Enumerate the site with DirBuster, Gobuster, FFUF, and `curl`
 2. Confirm exposed WordPress users, theme/plugin information, and XML-RPC methods
 3. Document the baseline
 4. Build a small hardening plugin
-5. Retest the same endpoints after remediation
+5. Retest the exact same endpoints after remediation
+6. Preserve sanitized evidence of the results
 
-The goal is not security through obscurity. The goal is to reduce unnecessary attack surface and information leakage while still keeping WordPress usable.
+The goal is not security through obscurity. The goal is to reduce unnecessary attack surface and information leakage while keeping WordPress usable.
+
+---
+
+## Compatibility
+
+This plugin uses standard WordPress core hooks and is intended for normal self-hosted WordPress installations, not just the site it was originally tested on.
+
+A few features are intentionally opinionated:
+
+- Disabling XML-RPC can break Jetpack, the WordPress mobile app, remote publishing, or other XML-RPC-dependent services.
+- Blocking author archives is not appropriate for sites that intentionally publish public author profile/archive pages.
+- The security headers are conservative, but unusual iframe or browser-permission requirements should be tested.
+- The plugin reduces easy fingerprinting and enumeration, but cannot completely hide WordPress, themes, or plugins when public asset paths reveal them.
+
+**Back up the site and test on staging before deploying to production.**
+
+---
 
 ## Installation
 
-1. Download the repository as a ZIP, or copy the plugin file into a folder named:
+1. Download or clone this repository.
+2. Put `bettycoder-privacy-hardening.php` inside a folder named:
 
    ```
    bettycoder-privacy-hardening
    ```
 
-2. Place it under:
+3. Place that folder under:
 
    ```
    wp-content/plugins/
    ```
 
-3. In WordPress, go to **Plugins**
-4. Activate **Bettycoder Privacy Hardening**
+4. In WordPress, go to **Plugins**
+5. Activate **Bettycoder Privacy Hardening**
 
-## Suggested before/after validation
+---
 
-Use your own authorized WordPress site.
+## Manual Validation
+
+Use only a WordPress site you own or are authorized to test.
 
 ### REST API user enumeration
 
@@ -67,9 +108,11 @@ Use your own authorized WordPress site.
 curl -i https://example.com/wp-json/wp/v2/users
 ```
 
-Before hardening, a site may return public user records.
+Expected after hardening:
 
-After hardening, unauthenticated requests should return **403**.
+```
+HTTP/2 403
+```
 
 ### XML-RPC
 
@@ -77,13 +120,12 @@ After hardening, unauthenticated requests should return **403**.
 curl -i https://example.com/xmlrpc.php
 ```
 
-Before hardening, WordPress may return:
+Expected after hardening:
 
 ```
-XML-RPC server accepts POST requests only.
+HTTP/2 403
+XML-RPC disabled.
 ```
-
-After hardening, the endpoint should be denied.
 
 ### Author enumeration
 
@@ -91,9 +133,15 @@ After hardening, the endpoint should be denied.
 curl -I "https://example.com/?author=1"
 ```
 
-After hardening, public author archives should no longer reveal the account.
+Expected after hardening:
 
-## Security notes
+```
+HTTP/2 404
+```
+
+---
+
+## Security Notes
 
 This plugin reduces attack surface and information disclosure. It is **not** a replacement for:
 
@@ -105,9 +153,16 @@ This plugin reduces attack surface and information disclosure. It is **not** a r
 - rate limiting
 - a WAF or host-level controls when appropriate
 
-## Screenshots
+---
 
-See the [screenshots guide](screenshots/README.md) and the [sanitized after-hardening results](screenshots/after-hardening-results.txt).
+## Evidence & Documentation
+
+- [Sanitized after-hardening results](screenshots/after-hardening-results.txt)
+- [Screenshot guide](screenshots/README.md)
+- [After-hardening screenshot](screenshots/sharden.png)
+- [Security policy](SECURITY.md)
+
+---
 
 ## License
 
