@@ -13,6 +13,19 @@ A lightweight WordPress security and privacy hardening plugin that reduces commo
 - Replaces detailed login errors with a generic message
 - Adds conservative privacy/security headers
 
+## Compatibility
+
+This plugin is written against standard WordPress core hooks, so it is intended to work on normal self-hosted WordPress installations, not just the site it was originally tested on.
+
+A few features are intentionally opinionated:
+
+- Disabling XML-RPC can break Jetpack, the WordPress mobile app, remote publishing, or other services that depend on XML-RPC.
+- Blocking author archives is not appropriate for sites that intentionally publish public author profile/archive pages.
+- The security headers are conservative, but sites with unusual iframe or browser-permission requirements should test them.
+- The plugin reduces easy fingerprinting and enumeration; it cannot completely hide that a site uses WordPress or prevent themes/plugins from being inferred from public asset paths.
+
+Always test on a staging site or take a backup before deploying to a production site.
+
 ## Why I built it
 
 This project came from manually testing my own WordPress site during PenTest+ practice.
@@ -92,11 +105,9 @@ This plugin reduces attack surface and information disclosure. It is **not** a r
 - rate limiting
 - a WAF or host-level controls when appropriate
 
-Disabling XML-RPC may affect Jetpack, the WordPress mobile app, remote publishing, or other services that depend on XML-RPC.
-
 ## Screenshots
 
-See the [screenshots guide](screenshots/README.md) for the before/after evidence I am collecting for this project.
+See the [screenshots guide](screenshots/README.md) and the [sanitized after-hardening results](screenshots/after-hardening-results.txt).
 
 ## License
 
