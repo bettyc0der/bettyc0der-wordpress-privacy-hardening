@@ -1,0 +1,35 @@
+Bettycoder WordPress Privacy Hardening
+Sanitized AFTER-hardening validation
+Target: [DOMAIN REDACTED]
+
+1. REST API user enumeration
+Command:
+curl -i https://[DOMAIN REDACTED]/wp-json/wp/v2/users
+
+Result:
+HTTP/2 403
+{"code":"rest_forbidden","message":"Not available.","data":{"status":403}}
+
+Status: PASS
+Unauthenticated REST user enumeration is blocked.
+
+2. XML-RPC
+Command:
+curl -i https://[DOMAIN REDACTED]/xmlrpc.php
+
+Result:
+HTTP/2 403
+XML-RPC disabled.
+
+Status: PASS
+XML-RPC is blocked.
+
+3. Author enumeration
+Command:
+curl -I "https://[DOMAIN REDACTED]/?author=1"
+
+Result:
+HTTP/2 404
+
+Status: PASS
+Public author enumeration is blocked.
